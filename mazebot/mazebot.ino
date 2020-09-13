@@ -8,8 +8,7 @@ MeDCMotor m2(M2); //right motor
 MeUltrasonicSensor ultrasonic(PORT_3);
 MeLineFollower LineSensor(PORT_2);
 
-
-int Sequencestate = 0;
+int Sequencestate = 1;
 
 void setup() {
 
@@ -17,17 +16,17 @@ void setup() {
 
 void loop() {
     switch(Sequencestate){
-      case 0:
+      case 0: //idle
         m1.run(0);
         m2.run(0);
         Sequencestate = 1;
         break;
       case 1:
         int sensorState = LineSensor.readSensors();
-          switch(sensorState)
+          switch(sensorState) //line following
           {
             case 0:
-              m1.run(-150)
+              m1.run(-150);
               m2.run(150);
               break;
             case 1:
@@ -39,11 +38,23 @@ void loop() {
               m2.run(0);
               break;
             case 3:
-              m1.run(-100);
-              m2.run(100)
+              Sequencestate = 2;
               break;
           }
+          break;
+      case 2: //intersection detection
+        while (LineSensor.readSensors() == 0){
+          m1.run(-200);
+          m2.run(200);
+        }
+        Sequencestate = 3;
         break;
-      
+      case 3:
+        while(LineSensor.readSensors() == 0){
+          m1.run(0);
+          m1.run(200);
+        }
+        Sequencestate = 4;
+        break;
          }
 }
