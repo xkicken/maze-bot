@@ -15,11 +15,13 @@ int Sequencestate = 0;
 
 void setup() {
 led.setpin(13);
-led.reset();
+led.setColor(255, 255, 255);
+led.show();
 }
 
 void loop() {
-  led.reset();
+  led.setColor(0,0,0);
+  led.show();
     switch(Sequencestate){
       case 0: //idle
         m1.run(0);
@@ -31,12 +33,14 @@ void loop() {
           switch(sensorState) //line following
           {
             case 0:
-              m1.run(-150);
-              m2.run(150);
+              m1.run(-255);
+              m2.run(255);
               break;
             case 1:
               m1.run(0);
               m2.run(150);
+              led.setColor(0, 0, 255);
+              led.show();
               break;
             case 2:
               m1.run(-150);
@@ -47,9 +51,9 @@ void loop() {
             case 3:
               m1.run(0);
               m2.run(0);
-              led.setColor(255, 0, 0,);
+              led.setColor(255, 0, 0);
               led.show();
-              Sequencestate = 2;
+              // Sequencestate = 2;
               break;
           }
           break;
