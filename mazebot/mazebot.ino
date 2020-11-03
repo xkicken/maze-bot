@@ -24,18 +24,8 @@ Serial.begin(9600);
 void loop() {
   Serial.print("Sequencestate =");
   Serial.println(Sequencestate);
-  Serial.print("distance(cm) =");
-  Serial.println(ultrasonic.distanceCm());
-  Serial.print("Line Following Sensor = "); 
-  switch(sensorState)
-  {
-    case S1_IN_S2_IN:   Serial.println("S1_IN_S2_IN"); break;
-    case S1_IN_S2_OUT:  Serial.println("S1_IN_S2_OUT"); break;
-    case S1_OUT_S2_IN:  Serial.println("S1_OUT_S2_IN"); break;
-    case S1_OUT_S2_OUT: Serial.println("S1_OUT_S2_OUT"); break;
-    default: break;
-  }
-
+  // Serial.print("distance(cm) =");
+  // Serial.println(ultrasonic.distanceCm());
   sensorState = LineSensor.readSensors();
   led.setColor(0,0,0);
   led.show();
@@ -76,8 +66,8 @@ void loop() {
       case 2: //intersection detection
         led.setColor(50, 50, 0); //Set both LED to White
         led.show();
-        m1.run(-200);
-        m2.run(200);
+        m1.run(-150);
+        m2.run(150);
         if (LineSensor.readSensors() < 3){ // 1 or more sensor sees black
           m1.run(0);
           m2.run(0);
@@ -92,7 +82,7 @@ void loop() {
         if (LineSensor.readSensors() == 2){
         Sequencestate = 4;
         }
-        break;
+      break;
       case 4:
         led.setColor(0, 50, 50);
         led.show();
@@ -105,7 +95,7 @@ void loop() {
         }
       break;
       case 5: //check distance if bigger than 7 go case 1 else case 6
-        if(ultrasonic.distanceCm() > 20){
+        if(ultrasonic.distanceCm() > 20 && ultrasonic.distanceCm() < 399){
           Sequencestate = 1;
         }
         else{
@@ -115,7 +105,7 @@ void loop() {
       case 6: //turn right when sensor 2 sees white go to case 7
         m1.run(-150);
         m2.run(-150);
-          if(LineSensor.readSensors() == 1){
+          if(LineSensor.readSensors() == 2){
             Sequencestate = 7;
           }
       break;
@@ -125,55 +115,7 @@ void loop() {
           if(LineSensor.readSensors() == 0){
             m1.stop();
             m2.stop();
-            Sequencestate = 8;
-          }
-      break;
-      case 8: //check distance if larger than 7cm than
-        if(ultrasonic.distanceCm() > 20){
-          Sequencestate = 1;
-        }
-        else{
-          Sequencestate = 9;
-        }
-      break;
-      case 9: //turn right when sensor sees white switch to case 10
-        m1.run(-150);
-        m2.run(-150);
-          if(LineSensor.readSensors() == 1){
-            Sequencestate = 10;
-          }
-      break;
-      case 10: //turn right untill both sensor sees black
-        m1.run(-150);;
-        m2.run(-150);
-          if(LineSensor.readSensors() == 0){
-            m1.stop();
-            m2.stop();
-            Sequencestate = 11;
-          }
-      break;
-      case 11:
-        if(ultrasonic.distanceCm() >20){ //check distance if greater than 20 switch case 1 else switch case 12
-          Sequencestate = 1;
-        }
-        else{
-          Sequencestate = 12;
-        }
-      break;
-      case 12:
-        m1.run(-150);
-        m2.run(-150);
-          if(LineSensor.readSensors() == 1){
-            Sequencestate = 13;
-          }
-      break;
-      case 13:
-        m1.run(-150);
-        m2.run(-150);
-          if(LineSensor.readSensors() == 0){
-            m1.stop();
-            m2.stop();
-            Sequencestate = 1;
+            Sequencestate = 5;
           }
       break;
       }
